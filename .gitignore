@@ -1,1 +1,26 @@
-.tfstate, .terraform/, .env, *.pem, kubeconfig*
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
+*.tfvars.json
+crash.log
+override.tf
+override.tf.json
+
+# Secrets et clés
+.env
+.env.*
+*.pem
+*.key
+cosign.key
+cosign.pub.bak
+
+# Kubernetes
+kubeconfig*
+*.kubeconfig
+
+# Divers
+.DS_Store
+.idea/
+.vscode/
