@@ -1,1 +1,0 @@
-.tfstate, .terraform/, .env, *.pem, kubeconfig*
