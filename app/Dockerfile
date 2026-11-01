@@ -10,7 +10,9 @@ RUN groupadd --system app \
  && useradd --system --gid app --create-home --shell /usr/sbin/nologin app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --root-user-action=ignore -r requirements.txt
+
+RUN pip install --no-cache-dir --root-user-action=ignore -r requirements.txt \
+   && pip uninstall -y --root-user-action=ignore pip
 
 COPY --chown=app:app main.py .
 
