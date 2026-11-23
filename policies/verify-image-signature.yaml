@@ -1,0 +1,37 @@
+apiVersion: policies.kyverno.io/v1
+kind: ImageValidatingPolicy
+metadata:
+  name: verify-ssc-image-signature
+spec:
+  validationActions: [Deny]
+  failurePolicy: Fail
+  webhookConfiguration:
+    timeoutSeconds: 15
+  evaluation:
+    background:
+      enabled: false
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  matchImageReferences:
+    - glob: "ghcr.io/kourfiya/secure-supply-chain-eks/*"
+  validationConfigurations:
+    mutateDigest: true
+    required: true
+  attestors:
+    - name: github
+      cosign:
+        keyless:
+          identities:
+            - subject: "https://github.com/kourfiya/secure-supply-chain-eks/.github/workflows/build.yml@refs/heads/main"
+              issuer: "https://token.actions.githubusercontent.com"
+        ctlog:
+          url: "https://rekor.sigstore.dev"
+  validations:
+    - expression: >-
+        images.containers.map(image, verifyImageSignatures(image, [attestors.github])).all(e, e > 0)
+      message: "image must be signed by the secure-supply-chain-eks build workflow"
+      
